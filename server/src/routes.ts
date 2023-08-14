@@ -1,9 +1,9 @@
 import { Router } from 'express'
 
+import user from './routes/User'
+
 const routes = Router()
 
-routes.get('/', (_, res) => {
-  res.json({ message: 'Hello, World!' })
-})
+routes.use(user)
 
 export default routes
