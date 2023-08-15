@@ -3,7 +3,7 @@
 import { Session } from 'neo4j-driver'
 
 import driver from '../config/database'
-import User from '../types/User'
+import User from '../types/user'
 
 export default class UserRepository {
   private db: Session
@@ -23,18 +23,49 @@ export default class UserRepository {
     return users
   }
 
-  async findUser(id: string) {
+  async findUserByID(id: string) {
     const query = await this.db.run(`MATCH (u:User { id: $id }) RETURN u`, {
       id,
     })
+
     const result = query.records[0] as any
 
-    const user = result._fields[0].properties
+    if (!result) {
+      return false
+    }
+
+    const user = result._fields && result._fields[0].properties
 
     return user
   }
 
-  async save({ id, name, username, email, password, university }: User) {
+  async findUserByEmail(email: string) {
+    const query = await this.db.run(
+      `MATCH (u:User { email: $email }) RETURN u`,
+      {
+        email,
+      },
+    )
+    const result = query.records[0] as any
+
+    if (!result) {
+      return false
+    }
+
+    const user = result._fields && result._fields[0].properties
+
+    return user
+  }
+
+  async save({
+    id,
+    name,
+    username,
+    email,
+    password,
+    university,
+    provider,
+  }: User) {
     const query = await this.db.run(
       `CREATE (:User {
       id: $id,
@@ -42,7 +73,8 @@ export default class UserRepository {
       username: $username,
       email: $email,
       password: $password,
-      university: $university
+      university: $university,
+      provider: $provider
     })`,
       {
         id,
@@ -51,6 +83,7 @@ export default class UserRepository {
         email,
         password,
         university,
+        provider,
       },
     )
 

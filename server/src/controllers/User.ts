@@ -3,7 +3,7 @@ import { Request, Response } from 'express'
 import { v4 as uuid } from 'uuid'
 import { hash } from 'bcrypt'
 
-import UserRepository from '../repositories/User'
+import UserRepository from '../repositories/user'
 
 class UserController {
   private userRepository: UserRepository
@@ -21,13 +21,17 @@ class UserController {
   async find(req: Request, res: Response) {
     const { id } = req.params
 
-    const user = await this.userRepository.findUser(id)
+    const user = await this.userRepository.findUserByID(id)
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
 
     return res.json(user)
   }
 
   async create(req: Request, res: Response) {
-    const { name, username, email, password, university } = req.body
+    const { name, username, email, password, university, provider } = req.body
 
     const id = uuid()
     const hashedPassword = await hash(password, 10)
@@ -39,6 +43,7 @@ class UserController {
       email,
       password: hashedPassword,
       university,
+      provider,
     })
 
     return res.json(newUser)
@@ -47,7 +52,7 @@ class UserController {
   async update(req: Request, res: Response) {
     const { id } = req.params
 
-    const user = await this.userRepository.findUser(id)
+    const user = await this.userRepository.findUserByID(id)
 
     if (!user) {
       return res.status(404).json({ error: 'User not found' })
