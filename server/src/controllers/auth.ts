@@ -29,7 +29,10 @@ class AuthController {
 
     const token = jsonwebtoken.sign(user, JWT_SECRET, { expiresIn: '7d' })
 
-    return res.json({ user, token })
+    return res.json({
+      ...user,
+      token,
+    })
   }
 }
 

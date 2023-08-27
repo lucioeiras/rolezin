@@ -10,4 +10,8 @@ userRoutes.post('/user', (req, res) => UserController.create(req, res))
 userRoutes.put('/user/:id', (req, res) => UserController.update(req, res))
 userRoutes.delete('/user/:id', (req, res) => UserController.delete(req, res))
 
+userRoutes.put('/user/photo/:id', (req, res) =>
+  UserController.uploadProfilePhoto(req, res),
+)
+
 export default userRoutes

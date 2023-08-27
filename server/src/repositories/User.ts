@@ -114,4 +114,24 @@ export default class UserRepository {
 
     return true
   }
+
+  async uploadProfilePhoto(id: string, imageURL: string) {
+    const query = await this.db.run(
+      `MATCH (u:User { id: $id }) SET u.photo = $photo`,
+      {
+        id,
+        photo: imageURL,
+      },
+    )
+
+    const result = query.records[0] as any
+
+    if (!result) {
+      return false
+    }
+
+    const user = result._fields && result._fields[0].properties
+
+    return user
+  }
 }

@@ -79,6 +79,25 @@ class UserController {
 
     return res.status(202).send()
   }
+
+  async uploadProfilePhoto(req: Request, res: Response) {
+    const { id } = req.params
+
+    const user = await this.userRepository.findUserByID(id)
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' })
+    }
+
+    const image = req.files
+
+    if (!image) return res.status(400).json({ error: 'Image not found' })
+
+    console.log(image)
+
+    // // Move the uploaded image to our upload folder
+    // image.mv(__dirname + '/upload/' + image.name)
+  }
 }
 
 export default new UserController()

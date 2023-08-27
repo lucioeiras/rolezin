@@ -6,4 +6,5 @@ export default interface User {
   password: string
   university: string
   provider?: string
+  photo?: string
 }
