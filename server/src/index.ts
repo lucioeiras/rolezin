@@ -2,7 +2,6 @@ import 'dotenv/config'
 
 import express from 'express'
 import cors from 'cors'
-import fileUpload from 'express-fileupload'
 
 import routes from './routes'
 
@@ -10,7 +9,8 @@ const app = express()
 
 app.use(cors())
 app.use(express.json())
-app.use(fileUpload())
+
+app.use('/uploads', express.static('temp/images'))
 
 app.use(routes)
 

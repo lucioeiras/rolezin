@@ -65,6 +65,7 @@ export default class UserRepository {
     password,
     university,
     provider,
+    photo,
   }: User) {
     const query = await this.db.run(
       `CREATE (:User {
@@ -74,7 +75,8 @@ export default class UserRepository {
       email: $email,
       password: $password,
       university: $university,
-      provider: $provider
+      provider: $provider,
+      photo: $photo
     })`,
       {
         id,
@@ -84,6 +86,7 @@ export default class UserRepository {
         password,
         university,
         provider,
+        photo,
       },
     )
 

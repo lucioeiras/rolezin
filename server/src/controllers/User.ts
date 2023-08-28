@@ -44,6 +44,7 @@ class UserController {
       password: hashedPassword,
       university,
       provider,
+      photo: `${process.env.BASE_URL}/uploads/standard.png`,
     })
 
     return res.json(newUser)
@@ -60,27 +61,21 @@ class UserController {
 
     const { name, username, email, password, university } = req.body
 
+    const hashedPassword = await hash(password, 10)
+
     const updatedUser = await this.userRepository.update({
       id,
       name,
       username,
       email,
-      password,
+      password: hashedPassword,
       university,
     })
 
     return res.json({ user: updatedUser })
   }
 
-  async delete(req: Request, res: Response) {
-    const { id } = req.params
-
-    await this.userRepository.delete(id)
-
-    return res.status(202).send()
-  }
-
-  async uploadProfilePhoto(req: Request, res: Response) {
+  async updatePicture(req: Request, res: Response) {
     const { id } = req.params
 
     const user = await this.userRepository.findUserByID(id)
@@ -89,14 +84,24 @@ class UserController {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const image = req.files
+    if (req.file) {
+      await this.userRepository.uploadProfilePhoto(
+        id,
+        `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+      )
 
-    if (!image) return res.status(400).json({ error: 'Image not found' })
+      return res.json({
+        url: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+      })
+    }
+  }
 
-    console.log(image)
+  async delete(req: Request, res: Response) {
+    const { id } = req.params
 
-    // // Move the uploaded image to our upload folder
-    // image.mv(__dirname + '/upload/' + image.name)
+    await this.userRepository.delete(id)
+
+    return res.status(202).send()
   }
 }
 

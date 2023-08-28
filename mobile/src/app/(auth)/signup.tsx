@@ -35,7 +35,7 @@ export default function SignUpScreen() {
 	async function onSubmit() {
 		if (confirmPassword === password) {
 			await user.register(name, username, university, email, password)
-			router.push('/profile')
+			setTimeout(() => router.push('/profile'), 500)
 		}
 	}
 
@@ -116,7 +116,7 @@ export default function SignUpScreen() {
 							onChangeText={setConfirmPassword}
 							autoCapitalize="none"
 							secureTextEntry={true}
-							placeholder="Digite sua senha mais segura"
+							placeholder="Digite sua senha novamente"
 							placeholderTextColor="#4A5568"
 						/>
 					</Field>

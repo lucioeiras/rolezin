@@ -10,6 +10,7 @@ interface UserInterface {
 	university?: string
 	email?: string
 	password?: string
+	photo?: string
 	token?: string
 }
 
@@ -19,6 +20,8 @@ interface UserContextInterface {
 	get(): void
 	store(data: UserInterface): void
 	login(email: string, password: string): Promise<void>
+	logout(): void
+
 	register(
 		name: string,
 		username: string,
@@ -26,6 +29,18 @@ interface UserContextInterface {
 		email: string,
 		password: string,
 	): Promise<void>
+
+	edit(
+		name: string,
+		username: string,
+		university: string,
+		email: string,
+		password: string,
+	): Promise<void>
+
+	delete(): void
+
+	uploadPhoto(formData: FormData): void
 }
 
 const UserContext = createContext<UserContextInterface>({
@@ -38,9 +53,19 @@ const UserContext = createContext<UserContextInterface>({
 		const university = (await AsyncStorage.getItem('university')) || ''
 		const email = (await AsyncStorage.getItem('email')) || ''
 		const password = (await AsyncStorage.getItem('password')) || ''
+		const photo = (await AsyncStorage.getItem('photo')) || ''
 		const token = (await AsyncStorage.getItem('token')) || ''
 
-		this.data = { id, name, username, university, email, password, token }
+		this.data = {
+			id,
+			name,
+			username,
+			university,
+			email,
+			password,
+			photo,
+			token,
+		}
 	},
 
 	store(data) {
@@ -50,6 +75,7 @@ const UserContext = createContext<UserContextInterface>({
 		data.university && AsyncStorage.setItem('university', data.university)
 		data.email && AsyncStorage.setItem('email', data.email)
 		data.password && AsyncStorage.setItem('password', data.password)
+		data.photo && AsyncStorage.setItem('photo', data.photo)
 		data.token && AsyncStorage.setItem('token', data.token)
 	},
 
@@ -58,6 +84,19 @@ const UserContext = createContext<UserContextInterface>({
 		this.data = data
 
 		this.store(data)
+	},
+
+	async logout() {
+		this.data = {}
+
+		await AsyncStorage.removeItem('id')
+		await AsyncStorage.removeItem('name')
+		await AsyncStorage.removeItem('username')
+		await AsyncStorage.removeItem('university')
+		await AsyncStorage.removeItem('email')
+		await AsyncStorage.removeItem('password')
+		await AsyncStorage.removeItem('photo')
+		await AsyncStorage.removeItem('token')
 	},
 
 	async register(name, username, university, email, password) {
@@ -69,7 +108,33 @@ const UserContext = createContext<UserContextInterface>({
 			password,
 			provider: 'rolezin',
 		})
+
 		this.login(email, password)
+	},
+
+	async edit(name, username, university, email, password) {
+		const { data } = await api.put(`/user/${this.data.id}`, {
+			name,
+			username,
+			university,
+			email,
+			password,
+			provider: 'rolezin',
+		})
+
+		const token = this.data.token
+
+		this.data = { ...data.user, token }
+	},
+
+	async delete() {
+		await api.delete(`/user/${this.data.id}`)
+		this.logout()
+	},
+
+	async uploadPhoto(formData) {
+		const response = await api.put(`/user/photo/${this.data.id}`, formData)
+		this.data.photo = response.data.url
 	},
 })
 

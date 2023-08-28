@@ -29,10 +29,12 @@ export default function Onboarding() {
 	useEffect(() => {
 		user.get()
 
-		if (user.data.token) {
-			router.push('/profile')
-		}
-	}, [])
+		setTimeout(() => {
+			if (user.data.token) {
+				router.push('/profile')
+			}
+		}, 100)
+	}, [user.data])
 
 	return (
 		<Container>
