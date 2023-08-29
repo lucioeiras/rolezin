@@ -24,17 +24,17 @@ import PartyImage from '../../../assets/party.png'
 export default function Onboarding() {
 	const router = useRouter()
 
-	const user = useContext(UserContext)
+	const userContext = useContext(UserContext)
 
 	useEffect(() => {
-		user.get()
+		userContext.get()
 
 		setTimeout(() => {
-			if (user.data.token) {
+			if (userContext.token) {
 				router.push('/profile')
 			}
-		}, 100)
-	}, [user.data])
+		}, 200)
+	}, [userContext.token])
 
 	return (
 		<Container>

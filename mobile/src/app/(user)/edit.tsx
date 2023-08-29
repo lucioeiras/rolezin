@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { useState, useContext } from 'react'
+import { useState, useContext, useEffect } from 'react'
 import { Platform } from 'react-native'
 
 import { StatusBar } from 'expo-status-bar'
@@ -32,16 +32,18 @@ import {
 	UploadPicture,
 } from '../../styles/(user)/edit'
 
+import api from '../../config/api'
+
 export default function SignUpScreen() {
 	const router = useRouter()
+	const userContext = useContext(UserContext)
 
-	const user = useContext(UserContext)
-
-	const [name, setName] = useState(user.data.name || '')
-	const [username, setUsername] = useState(user.data.username || '')
-	const [university, setUniversity] = useState(user.data.university || '')
-	const [email, setEmail] = useState(user.data.email || '')
+	const [name, setName] = useState('')
+	const [username, setUsername] = useState('')
+	const [university, setUniversity] = useState('')
+	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
+	const [photo, setPhoto] = useState('')
 
 	const [image, setImage] = useState<ImagePicker.ImagePickerAsset>()
 
@@ -58,13 +60,22 @@ export default function SignUpScreen() {
 	}
 
 	async function onSubmit() {
-		await user.edit(name, username, university, email, password)
-		user.uploadPhoto(createFormData(image))
+		await api.put(`/user/${userContext.id}`, {
+			name,
+			username,
+			university,
+			email,
+			password,
+			provider: 'rolezin',
+		})
+
+		await api.put(`/user/photo/${userContext.id}`, createFormData(image))
 		setTimeout(() => router.push('/profile'), 500)
 	}
 
 	async function deleteAccount() {
-		user.delete()
+		await api.delete(`/user/${userContext.id}`)
+		userContext.remove()
 		setTimeout(() => router.push('/'), 500)
 	}
 
@@ -77,6 +88,16 @@ export default function SignUpScreen() {
 			setImage(result.assets[0])
 		}
 	}
+
+	useEffect(() => {
+		api.get(`/user/${userContext.id}`).then(({ data }) => {
+			setName(data.name)
+			setUsername(data.username)
+			setUniversity(data.university)
+			setEmail(data.email)
+			setPhoto(data.photo)
+		})
+	}, [userContext])
 
 	return (
 		<ScrollContainer>
@@ -99,10 +120,8 @@ export default function SignUpScreen() {
 					<Field>
 						<Label>FOTO</Label>
 						<UploadPicture onPress={pickImage}>
-							{user.data.photo && (
-								<ProfilePicture
-									source={{ uri: image ? image.uri : user.data.photo }}
-								/>
+							{photo && (
+								<ProfilePicture source={{ uri: image ? image.uri : photo }} />
 							)}
 						</UploadPicture>
 					</Field>

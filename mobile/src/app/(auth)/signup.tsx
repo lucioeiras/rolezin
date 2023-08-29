@@ -20,10 +20,12 @@ import {
 	NakedText,
 } from '../../styles/(auth)/signup'
 
+import api from '../../config/api'
+
 export default function SignUpScreen() {
 	const router = useRouter()
 
-	const user = useContext(UserContext)
+	const userContext = useContext(UserContext)
 
 	const [name, setName] = useState('')
 	const [username, setUsername] = useState('')
@@ -34,7 +36,18 @@ export default function SignUpScreen() {
 
 	async function onSubmit() {
 		if (confirmPassword === password) {
-			await user.register(name, username, university, email, password)
+			await api.post('/user', {
+				name,
+				username,
+				university,
+				email,
+				password,
+				provider: 'rolezin',
+			})
+
+			const { data } = await api.post('/user/login', { email, password })
+			userContext.store(data.id, data.token)
+
 			setTimeout(() => router.push('/profile'), 500)
 		}
 	}

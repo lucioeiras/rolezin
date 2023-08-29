@@ -18,17 +18,19 @@ import {
 	Naked,
 	NakedText,
 } from '../../styles/(auth)/signin'
+import api from '../../config/api'
 
 export default function SignInScreen() {
 	const router = useRouter()
 
-	const user = useContext(UserContext)
+	const userContext = useContext(UserContext)
 
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
 
 	async function onSubmit() {
-		await user.login(email, password)
+		const { data } = await api.post('/user/login', { email, password })
+		userContext.store(data.id, data.token)
 		router.push('/profile')
 	}
 

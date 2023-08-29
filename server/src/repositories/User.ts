@@ -1,30 +1,28 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import { Session } from 'neo4j-driver'
-
 import driver from '../config/database'
 import User from '../types/user'
 
 export default class UserRepository {
-  private db: Session
-
-  constructor() {
-    this.db = driver.session()
-  }
-
   async listAll() {
-    const query = await this.db.run(`MATCH (u:User) RETURN u`)
+    const db = driver.session()
+
+    const query = await db.run(`MATCH (u:User) RETURN u`)
     const results = query.records as any
 
     const users = results.map(
       (result: { _fields: any }) => result._fields[0].properties,
     )
 
+    db.close()
+
     return users
   }
 
   async findUserByID(id: string) {
-    const query = await this.db.run(`MATCH (u:User { id: $id }) RETURN u`, {
+    const db = driver.session()
+
+    const query = await db.run(`MATCH (u:User { id: $id }) RETURN u`, {
       id,
     })
 
@@ -36,16 +34,17 @@ export default class UserRepository {
 
     const user = result._fields && result._fields[0].properties
 
+    db.close()
+
     return user
   }
 
   async findUserByEmail(email: string) {
-    const query = await this.db.run(
-      `MATCH (u:User { email: $email }) RETURN u`,
-      {
-        email,
-      },
-    )
+    const db = driver.session()
+
+    const query = await db.run(`MATCH (u:User { email: $email }) RETURN u`, {
+      email,
+    })
     const result = query.records[0] as any
 
     if (!result) {
@@ -53,6 +52,8 @@ export default class UserRepository {
     }
 
     const user = result._fields && result._fields[0].properties
+
+    db.close()
 
     return user
   }
@@ -67,7 +68,9 @@ export default class UserRepository {
     provider,
     photo,
   }: User) {
-    const query = await this.db.run(
+    const db = driver.session()
+
+    const query = await db.run(
       `CREATE (:User {
       id: $id,
       name: $name,
@@ -92,11 +95,15 @@ export default class UserRepository {
 
     const user = query.summary.query.parameters
 
+    db.close()
+
     return user
   }
 
   async update({ id, name, username, email, password, university }: User) {
-    const query = await this.db.run(
+    const db = driver.session()
+
+    const query = await db.run(
       `MATCH (u:User { id: $id })
       SET u.name = $name,
       u.username = $username,
@@ -109,17 +116,25 @@ export default class UserRepository {
 
     const user = query.summary.query.parameters
 
+    db.close()
+
     return user
   }
 
   async delete(id: string) {
-    await this.db.run(`MATCH (u:User { id: $id }) DETACH DELETE u`, { id })
+    const db = driver.session()
+
+    await db.run(`MATCH (u:User { id: $id }) DETACH DELETE u`, { id })
+
+    db.close()
 
     return true
   }
 
   async uploadProfilePhoto(id: string, imageURL: string) {
-    const query = await this.db.run(
+    const db = driver.session()
+
+    const query = await db.run(
       `MATCH (u:User { id: $id }) SET u.photo = $photo`,
       {
         id,
@@ -134,6 +149,8 @@ export default class UserRepository {
     }
 
     const user = result._fields && result._fields[0].properties
+
+    db.close()
 
     return user
   }

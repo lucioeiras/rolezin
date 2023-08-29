@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useEffect, useState } from 'react'
 
 import { Link, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
@@ -12,7 +12,9 @@ import {
 	Camera,
 } from 'phosphor-react-native'
 
-import UserContext from '../../contexts/user'
+import api from '../../config/api'
+
+import UserContext, { UserInterface } from '../../contexts/user'
 
 import {
 	Container,
@@ -38,49 +40,53 @@ import {
 
 export default function ProfileScreen() {
 	const router = useRouter()
-	const user = useContext(UserContext)
+	const userContext = useContext(UserContext)
+
+	const [user, setUser] = useState<UserInterface>()
 
 	async function logout() {
-		user.logout()
+		userContext.remove()
 		router.push('/')
 	}
 
-	console.log(user.data.photo)
+	useEffect(() => {
+		api.get(`/user/${userContext.id}`).then(({ data }) => setUser({ ...data }))
+	}, [])
 
 	return (
 		<Container>
-			<Header>
-				{user.data.photo && (
-					<ProfilePicture source={{ uri: user.data.photo }} />
-				)}
-				<Name>{user.data.name}</Name>
-				<InfoRow>
-					<TextRow>
-						<At size={18} color="#718096" weight="regular" />
-						<Username>{user.data.username}</Username>
-					</TextRow>
+			{user && (
+				<Header>
+					<ProfilePicture source={{ uri: user.photo }} />
+					<Name>{user.name}</Name>
+					<InfoRow>
+						<TextRow>
+							<At size={18} color="#718096" weight="regular" />
+							<Username>{user.username}</Username>
+						</TextRow>
 
-					<Divisor />
+						<Divisor />
 
-					<TextRow>
-						<GraduationCap size={18} color="#718096" weight="fill" />
-						<University>{user.data.university}</University>
-					</TextRow>
-				</InfoRow>
+						<TextRow>
+							<GraduationCap size={18} color="#718096" weight="fill" />
+							<University>{user.university}</University>
+						</TextRow>
+					</InfoRow>
 
-				<ButtonRow>
-					<Link href="/edit" asChild>
-						<PrimaryButton>
-							<PencilSimple size={18} color="#831FE8" weight="fill" />
-							<PrimaryButtonText>Editar perfil</PrimaryButtonText>
-						</PrimaryButton>
-					</Link>
+					<ButtonRow>
+						<Link href="/edit" asChild>
+							<PrimaryButton>
+								<PencilSimple size={18} color="#831FE8" weight="fill" />
+								<PrimaryButtonText>Editar perfil</PrimaryButtonText>
+							</PrimaryButton>
+						</Link>
 
-					<SecondaryButton onPress={logout}>
-						<SignOut size={18} color="#718096" weight="regular" />
-					</SecondaryButton>
-				</ButtonRow>
-			</Header>
+						<SecondaryButton onPress={logout}>
+							<SignOut size={18} color="#718096" weight="regular" />
+						</SecondaryButton>
+					</ButtonRow>
+				</Header>
+			)}
 
 			<Session>
 				<TitleRow>
