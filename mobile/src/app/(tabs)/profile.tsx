@@ -38,6 +38,8 @@ import {
 	Message,
 } from '../../styles/(tabs)/profile'
 
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL
+
 export default function ProfileScreen() {
 	const router = useRouter()
 	const userContext = useContext(UserContext)
@@ -57,7 +59,7 @@ export default function ProfileScreen() {
 		<Container>
 			{user && (
 				<Header>
-					<ProfilePicture source={{ uri: user.photo }} />
+					<ProfilePicture source={{ uri: BASE_URL + user.photo }} />
 					<Name>{user.name}</Name>
 					<InfoRow>
 						<TextRow>

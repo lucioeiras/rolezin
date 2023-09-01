@@ -34,6 +34,8 @@ import {
 
 import api from '../../config/api'
 
+const BASE_URL = process.env.EXPO_PUBLIC_API_URL
+
 export default function SignUpScreen() {
 	const router = useRouter()
 	const userContext = useContext(UserContext)
@@ -121,7 +123,9 @@ export default function SignUpScreen() {
 						<Label>FOTO</Label>
 						<UploadPicture onPress={pickImage}>
 							{photo && (
-								<ProfilePicture source={{ uri: image ? image.uri : photo }} />
+								<ProfilePicture
+									source={{ uri: image ? image.uri : BASE_URL + photo }}
+								/>
 							)}
 						</UploadPicture>
 					</Field>

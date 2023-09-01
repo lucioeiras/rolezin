@@ -44,7 +44,7 @@ class UserController {
       password: hashedPassword,
       university,
       provider,
-      photo: `${process.env.BASE_URL}/uploads/standard.png`,
+      photo: `/uploads/standard.png`,
     })
 
     return res.json(newUser)
@@ -87,11 +87,11 @@ class UserController {
     if (req.file) {
       await this.userRepository.uploadProfilePhoto(
         id,
-        `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        `/uploads/${req.file.filename}`,
       )
 
       return res.json({
-        url: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        url: `/uploads/${req.file.filename}`,
       })
     }
   }

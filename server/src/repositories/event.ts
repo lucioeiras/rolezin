@@ -17,7 +17,28 @@ export default class EventRepository {
 
     db.close()
 
-    return events
+    return events.filter((event: Event) => {
+      const dateObject = new Date()
+
+      const day =
+        dateObject.getDate() < 10
+          ? '0' + dateObject.getDate()
+          : dateObject.getDate()
+      const month =
+        dateObject.getMonth() < 10
+          ? '0' + (dateObject.getMonth() + 1)
+          : dateObject.getMonth() + 1
+      const year = dateObject.getFullYear()
+
+      const eventDateTimestamp = new Date(event.date)
+      const currentDateTimestap = new Date(`${year}-${month}-${day}`)
+
+      if (eventDateTimestamp < currentDateTimestap) {
+        return false
+      }
+
+      return true
+    })
   }
 
   async findEventByID(id: string) {

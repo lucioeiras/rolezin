@@ -4,12 +4,16 @@ import { v4 as uuid } from 'uuid'
 import { hash } from 'bcrypt'
 
 import OrganizerRepository from '../repositories/organizer'
+import EventRepository from '../repositories/event'
+import Event from '../types/event'
 
 class OrganizerController {
   private organizerRepository: OrganizerRepository
+  private eventRepository: EventRepository
 
   constructor() {
     this.organizerRepository = new OrganizerRepository()
+    this.eventRepository = new EventRepository()
   }
 
   async get(_: Request, res: Response) {
@@ -43,8 +47,8 @@ class OrganizerController {
       bio,
       email,
       password: hashedPassword,
-      photo: `${process.env.BASE_URL}/uploads/standard-organizer.png`,
-      thumb: `${process.env.BASE_URL}/uploads/standard-thumbnail.png`,
+      photo: `/uploads/standard-organizer.png`,
+      thumb: `/uploads/standard-thumbnail.png`,
     })
 
     return res.json(newUser)
@@ -87,11 +91,11 @@ class OrganizerController {
     if (req.file) {
       await this.organizerRepository.uploadProfilePhoto(
         id,
-        `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        `/uploads/${req.file.filename}`,
       )
 
       return res.json({
-        url: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        url: `/uploads/${req.file.filename}`,
       })
     }
   }
@@ -108,17 +112,20 @@ class OrganizerController {
     if (req.file) {
       await this.organizerRepository.uploadThumbnail(
         id,
-        `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        `/uploads/${req.file.filename}`,
       )
 
       return res.json({
-        url: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        url: `/uploads/${req.file.filename}`,
       })
     }
   }
 
   async delete(req: Request, res: Response) {
     const { id } = req.params
+    const events = await this.eventRepository.findEventsByOrganizer(id)
+
+    events.forEach((event: Event) => this.eventRepository.delete(event.id))
 
     await this.organizerRepository.delete(id)
 

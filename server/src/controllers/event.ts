@@ -59,7 +59,7 @@ class EventController {
       startHour,
       endHour,
       location,
-      image: `${process.env.BASE_URL}/uploads/standard-event.png`,
+      image: `/uploads/standard-event.png`,
     })
 
     return res.json(newEvent)
@@ -101,11 +101,11 @@ class EventController {
     if (req.file) {
       await this.eventRepository.uploadImage(
         id,
-        `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        `/uploads/${req.file.filename}`,
       )
 
       return res.json({
-        url: `${process.env.BASE_URL}/uploads/${req.file.filename}`,
+        url: `/uploads/${req.file.filename}`,
       })
     }
   }
