@@ -160,7 +160,7 @@ export default function Home() {
           </Link>
         </div>
 
-        <ul className="w-full mt-8 grid grid-flow-col gap-6 grid-cols-3">
+        <ul className="w-full mt-8 grid gap-6 grid-cols-3 grid-rows-3">
           {events &&
             events.map((event, index) => (
               <li
