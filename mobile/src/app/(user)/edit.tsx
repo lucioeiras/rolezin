@@ -42,6 +42,7 @@ export default function SignUpScreen() {
 
 	const [name, setName] = useState('')
 	const [username, setUsername] = useState('')
+	const [document, setDocument] = useState('')
 	const [university, setUniversity] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -68,6 +69,7 @@ export default function SignUpScreen() {
 			university,
 			email,
 			password,
+			document,
 			provider: 'rolezin',
 		})
 
@@ -98,6 +100,7 @@ export default function SignUpScreen() {
 			setUniversity(data.university)
 			setEmail(data.email)
 			setPhoto(data.photo)
+			setDocument(data.document)
 		})
 	}, [userContext])
 
@@ -148,6 +151,18 @@ export default function SignUpScreen() {
 							autoCorrect={false}
 							autoCapitalize="none"
 							placeholder="Digite um nome bem marcante"
+							placeholderTextColor="#4A5568"
+						/>
+					</Field>
+
+					<Field>
+						<Label>DOCUMENTO</Label>
+						<Input
+							value={document}
+							onChangeText={setDocument}
+							autoCorrect={false}
+							autoCapitalize="none"
+							placeholder="Digite o seu documento (RG ou CPF)"
 							placeholderTextColor="#4A5568"
 						/>
 					</Field>

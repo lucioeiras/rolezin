@@ -7,6 +7,7 @@ export interface EventInterface {
 	endHour: string
 	location: string
 	image?: string
+	price: number
 	organizer: {
 		id: string
 		name: string

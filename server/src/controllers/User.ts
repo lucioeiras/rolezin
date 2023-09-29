@@ -30,8 +30,17 @@ class UserController {
     return res.json(user)
   }
 
+  async findByUsername(req: Request, res: Response) {
+    const { input } = req.query
+
+    const users = await this.userRepository.findByUsername(String(input))
+
+    return res.json(users)
+  }
+
   async create(req: Request, res: Response) {
-    const { name, username, email, password, university, provider } = req.body
+    const { name, username, email, password, university, provider, document } =
+      req.body
 
     const id = uuid()
     const hashedPassword = await hash(password, 10)
@@ -45,6 +54,7 @@ class UserController {
       university,
       provider,
       photo: `/uploads/standard.png`,
+      document,
     })
 
     return res.json(newUser)
@@ -59,7 +69,7 @@ class UserController {
       return res.status(404).json({ error: 'User not found' })
     }
 
-    const { name, username, email, password, university } = req.body
+    const { name, username, email, password, university, document } = req.body
 
     const hashedPassword = await hash(password, 10)
 
@@ -70,6 +80,7 @@ class UserController {
       email,
       password: hashedPassword,
       university,
+      document,
     })
 
     return res.json({ user: updatedUser })

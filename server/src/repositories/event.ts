@@ -97,6 +97,7 @@ export default class EventRepository {
     endHour,
     location,
     image,
+    price,
   }: Event) {
     const db = driver.session()
 
@@ -109,7 +110,8 @@ export default class EventRepository {
         startHour: $startHour,
         endHour: $endHour,
         location: $location,
-        image: $image
+        image: $image,
+        price: $price
     })`,
       {
         id,
@@ -120,6 +122,7 @@ export default class EventRepository {
         endHour,
         location,
         image,
+        price,
       },
     )
 
@@ -143,6 +146,7 @@ export default class EventRepository {
     startHour,
     endHour,
     location,
+    price,
   }: Event) {
     const db = driver.session()
 
@@ -153,7 +157,8 @@ export default class EventRepository {
       e.date = $date,
       e.startHour = $startHour,
       e.endHour = $endHour,
-      e.location = $location
+      e.location = $location,
+      e.price = $price
     `,
       {
         id,
@@ -163,12 +168,13 @@ export default class EventRepository {
         startHour,
         endHour,
         location,
+        price,
       },
     )
 
-    const event = query.summary.query.parameters
-
     db.close()
+
+    const event = query.summary.query.parameters
 
     return event
   }

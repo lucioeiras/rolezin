@@ -8,4 +8,5 @@ export default interface Event {
   location: string
   image?: string
   organizerId?: string
+  price: number
 }

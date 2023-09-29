@@ -11,12 +11,14 @@ eventRoutes.get('/event/:id', (req, res) => EventController.find(req, res))
 eventRoutes.get('/organizer/events/:organizerId', (req, res) =>
   EventController.findByOrganizer(req, res),
 )
-eventRoutes.post('/event', (req, res) => EventController.create(req, res))
-eventRoutes.put('/event/:id', (req, res) => EventController.update(req, res))
-eventRoutes.delete('/event/:id', (req, res) => EventController.delete(req, res))
 
+eventRoutes.post('/event', (req, res) => EventController.create(req, res))
+
+eventRoutes.put('/event/:id', (req, res) => EventController.update(req, res))
 eventRoutes.put('/event/image/:id', upload.single('image'), (req, res) =>
   EventController.updatePicture(req, res),
 )
+
+eventRoutes.delete('/event/:id', (req, res) => EventController.delete(req, res))
 
 export default eventRoutes

@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 
-import { Link, useRouter } from 'expo-router'
+import { Link, useLocalSearchParams, useRouter } from 'expo-router'
 import { StatusBar } from 'expo-status-bar'
 
 import {
@@ -10,11 +10,14 @@ import {
 	At,
 	CalendarBlank,
 	Camera,
+	UserPlus,
 } from 'phosphor-react-native'
 
 import api from '../../config/api'
 
 import UserContext, { UserInterface } from '../../contexts/user'
+
+import EventList from '../../components/EventList'
 
 import {
 	Container,
@@ -38,13 +41,17 @@ import {
 	Message,
 } from '../../styles/(tabs)/profile'
 
+import { EventInterface } from '../../@types/event'
+
 const BASE_URL = process.env.EXPO_PUBLIC_API_URL
 
 export default function ProfileScreen() {
 	const router = useRouter()
+	const { userId } = useLocalSearchParams()
 	const userContext = useContext(UserContext)
 
 	const [user, setUser] = useState<UserInterface>()
+	const [events, setEvents] = useState<EventInterface[]>()
 
 	async function logout() {
 		userContext.remove()
@@ -52,8 +59,9 @@ export default function ProfileScreen() {
 	}
 
 	useEffect(() => {
-		api.get(`/user/${userContext.id}`).then(({ data }) => setUser({ ...data }))
-	}, [])
+		api.get(`/user/${userId}`).then(({ data }) => setUser({ ...data }))
+		api.get(`/purchase/events/${userId}`).then(({ data }) => setEvents(data))
+	}, [userId])
 
 	return (
 		<Container>
@@ -78,14 +86,24 @@ export default function ProfileScreen() {
 					<ButtonRow>
 						<Link href="/edit" asChild>
 							<PrimaryButton>
-								<PencilSimple size={18} color="#831FE8" weight="fill" />
-								<PrimaryButtonText>Editar perfil</PrimaryButtonText>
+								{userId === userContext.id ? (
+									<PencilSimple size={18} color="#831FE8" weight="fill" />
+								) : (
+									<UserPlus size={18} color="#831FE8" weight="fill" />
+								)}
+								<PrimaryButtonText>
+									{userId === userContext.id
+										? 'Editar perfil'
+										: 'Solicitar amizade'}
+								</PrimaryButtonText>
 							</PrimaryButton>
 						</Link>
 
-						<SecondaryButton onPress={logout}>
-							<SignOut size={18} color="#718096" weight="regular" />
-						</SecondaryButton>
+						{userId === userContext.id && (
+							<SecondaryButton onPress={logout}>
+								<SignOut size={18} color="#718096" weight="regular" />
+							</SecondaryButton>
+						)}
 					</ButtonRow>
 				</Header>
 			)}
@@ -96,9 +114,13 @@ export default function ProfileScreen() {
 					<Subtitle>PRÓXIMOS EVENTOS</Subtitle>
 				</TitleRow>
 
-				<Tickets>
-					<Message>Esse usuário ainda não possui ingressos comprados</Message>
-				</Tickets>
+				{events && events[0] ? (
+					<EventList events={events} showOrganizer={false} />
+				) : (
+					<Tickets>
+						<Message>Você ainda não possui ingressos comprados</Message>
+					</Tickets>
+				)}
 			</Session>
 
 			<Session>
@@ -108,7 +130,7 @@ export default function ProfileScreen() {
 				</TitleRow>
 
 				<Albums>
-					<Message>Esse usuário ainda não criou nenhum album de fotos</Message>
+					<Message>Você ainda não criou nenhum album de fotos.</Message>
 				</Albums>
 			</Session>
 

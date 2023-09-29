@@ -58,6 +58,24 @@ export default class UserRepository {
     return user
   }
 
+  async findByUsername(input: string) {
+    const db = driver.session()
+
+    const query = await db.run(
+      `MATCH (u:User) WHERE u.username CONTAINS $input RETURN u`,
+      { input },
+    )
+    const results = query.records as any
+
+    const users = results.map(
+      (result: { _fields: any }) => result._fields[0].properties,
+    )
+
+    db.close()
+
+    return users
+  }
+
   async save({
     id,
     name,
@@ -67,6 +85,7 @@ export default class UserRepository {
     university,
     provider,
     photo,
+    document,
   }: User) {
     const db = driver.session()
 
@@ -79,7 +98,8 @@ export default class UserRepository {
       password: $password,
       university: $university,
       provider: $provider,
-      photo: $photo
+      photo: $photo,
+      document: $document
     })`,
       {
         id,
@@ -90,6 +110,7 @@ export default class UserRepository {
         university,
         provider,
         photo,
+        document,
       },
     )
 
@@ -100,7 +121,15 @@ export default class UserRepository {
     return user
   }
 
-  async update({ id, name, username, email, password, university }: User) {
+  async update({
+    id,
+    name,
+    username,
+    email,
+    password,
+    university,
+    document,
+  }: User) {
     const db = driver.session()
 
     const query = await db.run(
@@ -109,9 +138,10 @@ export default class UserRepository {
       u.username = $username,
       u.email = $email,
       u.password = $password,
-      u.university = $university
+      u.university = $university,
+      u.document = $document
     `,
-      { id, name, username, email, password, university },
+      { id, name, username, email, password, university, document },
     )
 
     const user = query.summary.query.parameters

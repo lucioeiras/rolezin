@@ -1,16 +1,16 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useContext, useState, useEffect, FormEvent } from 'react'
+import { useState, useEffect, FormEvent } from 'react'
 
 import {
   MapPin,
-  Key,
   Confetti,
   CalendarPlus,
   HourglassHigh,
   HourglassLow,
   PencilSimple,
+  CurrencyDollar,
 } from '@phosphor-icons/react'
 
 import api from '@/config/api'
@@ -24,6 +24,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
   const [startHour, setStartHour] = useState<string>('')
   const [endHour, setEndHour] = useState<string>('')
   const [location, setLocation] = useState<string>('')
+  const [price, setPrice] = useState<string>('')
 
   const [image, setImage] = useState<File>()
 
@@ -53,6 +54,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
       setStartHour(data.startHour)
       setEndHour(data.endHour)
       setLocation(data.location)
+      setPrice(data.price)
     })
   }, [params.id])
 
@@ -66,6 +68,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
       startHour,
       endHour,
       location,
+      price,
     })
 
     const formData = new FormData()
@@ -133,6 +136,23 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
                 className="placeholder-slate-400 w-full text-slate-700"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <label htmlFor="description" className="text-slate-600">
+              Preço
+            </label>
+            <div className="flex mt-2 p-5 border-gray-200 border rounded-lg">
+              <CurrencyDollar size={24} color="#A0AEC0" className="mr-4" />
+              <input
+                name="price"
+                type="number"
+                placeholder="Digite o preço do ingresso"
+                className="placeholder-slate-400 w-full text-slate-700"
+                value={price}
+                onChange={(e) => setPrice(e.target.value)}
               />
             </div>
           </div>

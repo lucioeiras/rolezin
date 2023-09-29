@@ -46,6 +46,7 @@ class EventController {
       endHour,
       location,
       organizerId,
+      price,
     } = req.body
 
     const id = uuid()
@@ -60,6 +61,7 @@ class EventController {
       endHour,
       location,
       image: `/uploads/standard-event.png`,
+      price,
     })
 
     return res.json(newEvent)
@@ -74,7 +76,8 @@ class EventController {
       return res.status(404).json({ error: 'Event not found' })
     }
 
-    const { name, description, date, startHour, endHour, location } = req.body
+    const { name, description, date, startHour, endHour, location, price } =
+      req.body
 
     const updatedEvent = await this.eventRepository.update({
       id,
@@ -84,6 +87,7 @@ class EventController {
       startHour,
       endHour,
       location,
+      price,
     })
 
     return res.json({ ...updatedEvent })

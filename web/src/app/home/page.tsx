@@ -13,10 +13,11 @@ import {
   Trash,
   Plus,
   CalendarBlank,
+  User,
 } from '@phosphor-icons/react'
 
 import OrganizerContext, { OrganizerInterface } from '@/contexts/organizer'
-import { EventInterface } from '@/@types/Event'
+import EventInterface from '@/@types/Event'
 
 import api from '@/config/api'
 
@@ -195,6 +196,14 @@ export default function Home() {
                   </div>
 
                   <div className="flex items-center gap-5 mt-4">
+                    <Link
+                      href={`/event/users/${event.id}`}
+                      className="flex items-center gap-2 text-slate-400 hover:text-purple-600 duration-300"
+                    >
+                      <User size={20} />
+                      <span className="font-medium">Usuários</span>
+                    </Link>
+
                     <Link
                       href={`/event/edit/${event.id}`}
                       className="flex items-center gap-2 text-slate-400 hover:text-purple-600 duration-300"

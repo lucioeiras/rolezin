@@ -7,5 +7,5 @@ export default interface User {
   university: string
   provider?: string
   photo?: string
-  document: string
+  document?: string
 }

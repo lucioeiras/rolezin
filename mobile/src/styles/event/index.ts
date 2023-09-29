@@ -78,3 +78,32 @@ export const EventInfoLabel = styled.Text`
 	font-size: 16px;
 	font-family: 'Inter_600SemiBold';
 `
+
+export const Button = styled.TouchableOpacity`
+	width: 100%;
+
+	align-items: center;
+	justify-content: center;
+
+	background: #831fe8;
+
+	border-radius: 5px;
+
+	padding: 16px;
+	margin-top: 32px;
+`
+
+export const ButtonText = styled.Text`
+	color: #fff;
+	font-family: 'Inter_700Bold';
+	font-size: 16px;
+`
+
+export const TicketContainer = styled.View`
+	gap: 16px;
+`
+
+export const TicketQRCode = styled.Image`
+	height: 160px;
+	width: 160px;
+`

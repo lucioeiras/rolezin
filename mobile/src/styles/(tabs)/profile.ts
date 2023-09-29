@@ -1,6 +1,6 @@
 import styled from 'styled-components/native'
 
-export const Container = styled.View`
+export const Container = styled.ScrollView`
 	height: 100%;
 	width: 100%;
 
@@ -8,7 +8,7 @@ export const Container = styled.View`
 
 	background: #12061f;
 
-	padding: 0px 24px;
+	padding: 0 24px;
 `
 
 export const Header = styled.View`
@@ -132,6 +132,7 @@ export const Tickets = styled.View`
 
 export const Albums = styled.View`
 	margin-top: 16px;
+	margin-bottom: 24px;
 `
 
 export const Message = styled.Text`

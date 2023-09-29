@@ -31,7 +31,7 @@ export default function SignInScreen() {
 	async function onSubmit() {
 		const { data } = await api.post('/user/login', { email, password })
 		userContext.store(data.id, data.token)
-		router.push('/profile')
+		router.push({ pathname: '/profile', params: { userId: data.id } })
 	}
 
 	return (
@@ -52,6 +52,7 @@ export default function SignInScreen() {
 						value={email}
 						onChangeText={setEmail}
 						autoCapitalize="none"
+						autoCorrect={false}
 						autoComplete="email"
 						keyboardType="email-address"
 						placeholder="Digite seu melhor e-mail"

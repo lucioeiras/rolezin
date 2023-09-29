@@ -29,6 +29,7 @@ export default function SignUpScreen() {
 
 	const [name, setName] = useState('')
 	const [username, setUsername] = useState('')
+	const [document, setDocument] = useState('')
 	const [university, setUniversity] = useState('')
 	const [email, setEmail] = useState('')
 	const [password, setPassword] = useState('')
@@ -39,6 +40,7 @@ export default function SignUpScreen() {
 			await api.post('/user', {
 				name,
 				username,
+				document,
 				university,
 				email,
 				password,
@@ -48,7 +50,11 @@ export default function SignUpScreen() {
 			const { data } = await api.post('/user/login', { email, password })
 			userContext.store(data.id, data.token)
 
-			setTimeout(() => router.push('/profile'), 500)
+			setTimeout(
+				() =>
+					router.push({ pathname: '/profile', params: { userId: data.id } }),
+				500,
+			)
 		}
 	}
 
@@ -88,6 +94,18 @@ export default function SignUpScreen() {
 					</Field>
 
 					<Field>
+						<Label>DOCUMENTO</Label>
+						<Input
+							value={document}
+							onChangeText={setDocument}
+							autoCorrect={false}
+							autoCapitalize="none"
+							placeholder="Digite o seu documento (CPF ou RG)"
+							placeholderTextColor="#4A5568"
+						/>
+					</Field>
+
+					<Field>
 						<Label>FACULDADE</Label>
 						<Input
 							value={university}
@@ -119,6 +137,7 @@ export default function SignUpScreen() {
 							secureTextEntry={true}
 							placeholder="Digite sua senha mais segura"
 							placeholderTextColor="#4A5568"
+							autoCorrect={false}
 						/>
 					</Field>
 

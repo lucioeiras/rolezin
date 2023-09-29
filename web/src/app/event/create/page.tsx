@@ -5,12 +5,12 @@ import { useContext, useState, useEffect, FormEvent } from 'react'
 
 import {
   MapPin,
-  Key,
   Confetti,
   CalendarPlus,
   HourglassHigh,
   HourglassLow,
   PencilSimple,
+  CurrencyDollar,
 } from '@phosphor-icons/react'
 
 import api from '@/config/api'
@@ -27,6 +27,7 @@ export default function CreateEventPage() {
   const [startHour, setStartHour] = useState<string>('')
   const [endHour, setEndHour] = useState<string>('')
   const [location, setLocation] = useState<string>('')
+  const [price, setPrice] = useState<number>()
 
   const [image, setImage] = useState<File>()
 
@@ -60,6 +61,7 @@ export default function CreateEventPage() {
       endHour,
       location,
       organizerId: organizerContext.data.id,
+      price,
     })
 
     const formData = new FormData()
@@ -126,6 +128,23 @@ export default function CreateEventPage() {
                 className="placeholder-slate-400 w-full text-slate-700"
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
+              />
+            </div>
+          </div>
+
+          <div className="mt-6">
+            <label htmlFor="description" className="text-slate-600">
+              Preço
+            </label>
+            <div className="flex mt-2 p-5 border-gray-200 border rounded-lg">
+              <CurrencyDollar size={24} color="#A0AEC0" className="mr-4" />
+              <input
+                name="price"
+                type="number"
+                placeholder="Digite o preço do ingresso"
+                className="placeholder-slate-400 w-full text-slate-700"
+                value={price}
+                onChange={(e) => setPrice(Number(e.target.value))}
               />
             </div>
           </div>
